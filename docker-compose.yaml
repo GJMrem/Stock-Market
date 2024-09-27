@@ -1,0 +1,16 @@
+services:
+  jupyter:
+    image: stock_market
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+
+    mem_limit: 1.5g
+    memswap_limit: 2g
+    cpus: "0.5"
+
+    ports:
+      - 8888:8888
+    volumes:
+      - './data:/home/jovyan/work/data'
+    
