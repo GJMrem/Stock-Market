@@ -1,0 +1,13 @@
+data
+env
+models
+
+# docker
+.dockeringnore
+docker-compose.yml
+Dockerfile
+
+# git
+.git
+.gitattributes
+.gitignore
