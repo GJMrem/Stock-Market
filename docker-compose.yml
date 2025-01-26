@@ -5,13 +5,18 @@ services:
       context: .
       dockerfile: ./Dockerfile
       args:
-          - JUPYTER_SERVER_PWD=$JUPYTER_SERVER_PWD
+          - JUPYTER_SERVER_PWD=${JUPYTER_SERVER_PWD}
 
     # mem_limit: 1.5g
     # memswap_limit: 2g
     # cpus: "0.5"
     
-    command: conda run --name time-series-env start-notebook.py --ServerApp.ip=0.0.0.0 --ServerApp.token="$JUPYTER_SERVER_PWD"
+    command: |
+      conda run --name time-series-env start-notebook.py
+      --ServerApp.ip=0.0.0.0
+      --ServerApp.token=${JUPYTER_SERVER_PWD}
+      --ServerApp.notebook_dir=/home/jovyan/work/notebooks
+
     restart: always
     ports:
       - 8888:8888
