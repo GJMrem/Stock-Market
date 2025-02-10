@@ -1,6 +1,6 @@
 FROM quay.io/jupyter/base-notebook:latest
 WORKDIR /home/jovyan/work
-COPY --chown=jovyan ./ /home/jovyan/work
+#COPY --chown=jovyan ./ /home/jovyan/work
 
 RUN conda update --name base --channel defaults conda --yes
 RUN conda env create --file environment.yml --yes
