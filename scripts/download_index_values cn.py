@@ -18,7 +18,8 @@ for index_name, ticker in tickers.items():
     while (rs.error_code == "0") & rs.next():
         data_list.append(rs.get_row_data())
     data = pd.DataFrame(data_list, columns=rs.fields)
-    data.set_index(pd.to_datetime(data["Date"]), inplace=True)
+    data["Date"] = pd.to_datetime(data["Date"])
+    data.set_index("Date", inplace=True)
     
     filename = f"data/{index_name}.csv"
     data.to_csv(filename)
