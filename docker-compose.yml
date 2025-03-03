@@ -1,3 +1,4 @@
+name: stock-market
 services:
   jupyter:
     image: stock-market-image
