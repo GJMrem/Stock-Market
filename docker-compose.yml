@@ -41,6 +41,7 @@ services:
       - ./data:/home/jovyan/work/data
       - ./models:/home/jovyan/work/models
       - ./notebooks:/home/jovyan/work/notebooks
+      - ./src:/home/jovyan/work/src
 
   mlflow:
     image: ghcr.io/mlflow/mlflow:v2.19.0
