@@ -1,7 +1,7 @@
 import torch
 import torch.nn as nn
 
-__all__ = ['Baseline','LSTMModel','RNNModel','ResNLS']
+__all__ = ['Baseline','LSTM','RNN','ResNLS']
 
 class Baseline(nn.Module):
     def __init__(self, input_size=1, output_size=1):
@@ -13,9 +13,9 @@ class Baseline(nn.Module):
         # (N,L,num_factors), assumimg target time series  
         return x[:,-1,0].tile(self.horizon)
     
-class LSTMModel(nn.Module):
+class LSTM(nn.Module):
     def __init__(self, input_size=1, output_size=1,*, hidden_size=1, num_layers=1, dropout=0):
-        super(LSTMModel, self).__init__()
+        super(LSTM, self).__init__()
         self.num_factors = input_size
         self.horizon = output_size
         
@@ -31,9 +31,9 @@ class LSTMModel(nn.Module):
         out = self.fc(out[:, -1, :])
         return out
     
-class RNNModel(nn.Module):
+class RNN(nn.Module):
     def __init__(self, input_size=1, output_size=1,*, hidden_size=1, num_layers=1, dropout=0):
-        super(RNNModel, self).__init__()
+        super(RNN, self).__init__()
         self.num_factors = input_size
         self.horizon = output_size
         self.hidden_size = hidden_size
