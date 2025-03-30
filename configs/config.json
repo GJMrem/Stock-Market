@@ -1,0 +1,25 @@
+{
+    "model": "LSTM",
+    "training_params": {
+        "num_epochs": 50,
+        "batch_size": 128,
+        "learning_rate": 0.001,
+        "lr_decay": 0.8,
+        "lr_patience": 2,
+        "patience": 3,
+        "min_delta": 1e-5,
+        "val_interval": 1
+    },
+    "data_params": {
+        "lookback": 20,
+        "horizon": 7,
+        "train_size": 0.7,
+        "val_size": 0.15,
+        "test_size": 0.15
+    },
+    "model_params": {
+        "hidden_size": 32,
+        "num_layers": 2,
+        "dropout": 0.2
+    }
+}
