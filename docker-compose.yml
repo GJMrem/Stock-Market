@@ -1,4 +1,9 @@
 name: stock-market
+
+x-postgres-credentials: &postgres-credentials
+    POSTGRES_USER: ${POSTGRES_USER:- postgres}
+    POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:- postgres}
+
 services:
   jupyter:
     image: stock-market-image
@@ -25,8 +30,8 @@ services:
               capabilities: [gpu]    
                   
     environment:
-      - MLFLOW_TRACKING_URI=http://stock-market-mlflow-1:5000
-      - GIT_PYTHON_REFRESH=quiet
+      MLFLOW_TRACKING_URI: http://stock-market-mlflow-1:5000
+      GIT_PYTHON_REFRESH: quiet
 
     command: |
       conda run --name time-series-env start-notebook.py
@@ -44,20 +49,53 @@ services:
       - ./src:/home/jovyan/work/src
 
   mlflow:
-    image: ghcr.io/mlflow/mlflow:v2.19.0
+    image: ghcr.io/mlflow/mlflow:latest
 
     environment:
-      - MLFLOW_BACKEND_STORE_URI=file:///mlflow/mlruns
-      - MLFLOW_ARTIFACTS_DESTINATION=/mlflow/mlartifacts
-      - MLFLOW_HOST=0.0.0.0
-
-    command: mlflow server
+      # - MLFLOW_BACKEND_STORE_URI = file:///mlflow/mlruns
+      <<: *postgres-credentials
+      MLFLOW_TRACKING_USERNAME: ${MLFLOW_TRACKING_USERNAME}
+      MLFLOW_TRACKING_PASSWORD: ${MLFLOW_TRACKING_PASSWORD}
+      MLFLOW_BACKEND_STORE_URI: postgresql://${POSTGRES_USER}:${POSTGRES_PASSWORD}@stock-market-postgres-1:5432/mlflow_db
+      MLFLOW_ARTIFACTS_DESTINATION: /mlflow/mlartifacts
+      MLFLOW_HOST: 0.0.0.0
+    
+    # pip install psycopg2-binary
+    command: 
+    - /bin/sh
+    - -c
+    - |
+      pip install psycopg2-binary --quiet
+      mlflow server
     
     restart: always
+    depends_on:
+      - postgres
     ports:
       - 5000:5000
     volumes:
       - mlflow-data:/mlflow
 
+  postgres:
+    image: postgres:latest
+    environment:
+      <<: *postgres-credentials
+      POSTGRES_DB: ${POSTGRES_DB:- stock_market}
+
+    command: 
+    - /bin/sh
+    - -c
+    - |
+      echo 'CREATE DATABASE mlflow_db;' > /docker-entrypoint-initdb.d/init.sql
+      docker-entrypoint.sh postgres
+      wait
+
+    restart: always
+    ports:
+      - 5432:5432
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+
 volumes:
   mlflow-data:
+  postgres-data:
